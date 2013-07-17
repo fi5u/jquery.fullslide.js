@@ -254,15 +254,15 @@
             // ---------------------------------------------------------------------------------------------------------- //
 
 
-            // Slide left on press of the left control
+            // Slide right on press of the left control
             $(el).next('.fullslide-controls').on('click', '.fullslide-left', function(event) {
-                slide("left");
+                slide("right");
                 event.preventDefault();
             });
 
-            // Slide right on press of the right control
+            // Slide left on press of the right control
             $(el).next('.fullslide-controls').on('click', '.fullslide-right', function(event) {
-                slide("right");
+                slide("left");
                 event.preventDefault();
             });
 
