@@ -1,0 +1,40 @@
+.fullslide-wrap {
+    position: relative;
+    width: 100%;
+
+    overflow: hidden;
+}
+
+.fullslide-wrap > ul {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fullslide-wrap > ul > li {
+    display: block;
+    float: left;
+}
+
+.fullslide-controls {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 100%;
+}
+
+.fullslide-left,
+.fullslide-right {
+    position: absolute;
+    display: block;
+}
+
+.fullslide-left {
+    left: 0;
+}
+
+.fullslide-right {
+    right: 0;
+}
