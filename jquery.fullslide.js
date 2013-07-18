@@ -91,39 +91,32 @@
                     height : ulH + "px"
                 });
 
-                // If more than one slide is to be shown and there is margin applied, then calclulate widths including margins
-                if( settings.displayQty > 1 && settings.slideMargin > 0 ) {
+                // Set the cell width in %
+                slideW = 100 / slideQty;
 
-                    // Set the cell width in %
-                    slideW = 100 / slideQty;
+                // Apply the slide width
+                $(fullslideLi).css("width", slideW + "%");
 
-                    // Apply the slide width
-                    $(fullslideLi).css("width", slideW + "%");
+                // Get the cell width in px
+                slideWpx = $(fullslideLi).first().outerWidth();
 
-                    // Get the cell width in px
-                    slideWpx = $(fullslideLi).first().outerWidth();
-
+                if( settings.slideMargin > 0 ) {
                     // Get the total margin for the whole slideshow
                     totalM = settings.slideMargin * (settings.displayQty - 1);
 
                     // Calculate width of the slides
                     slideW = slideWpx - (totalM / settings.displayQty);
 
-                    // Apply the slide margins
-                    $(fullslideLi).css("marginRight", settings.slideMargin + "px");
-
-                    //Apply the width
-                    $(fullslideLi).css("width", slideW + "px");
-
                 } else {
-                    // Otherwise no margins need to be accounted for
-
-                    // Calculate the slide width which is a percentage of its parent
-                    slideW = 100 / slideQty;
-
-                    // Apply the slide width
-                    $(fullslideLi).css("width", slideW + "%");
+                    // Calculate width of the slides
+                    slideW = slideWpx - settings.displayQty;
                 }
+
+                // Apply the slide margins
+                $(fullslideLi).css("marginRight", settings.slideMargin + "px");
+
+                //Apply the width
+                $(fullslideLi).css("width", slideW + "px");
 
                 // Once all the sizes are set, we need to offset the ul to hide the slides to the left of the viewable slides
                 offsetFirstSlide();
