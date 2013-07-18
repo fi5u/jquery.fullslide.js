@@ -32,6 +32,22 @@
                 $.extend(settings, options);
             }
 
+            /**
+             *  Function to set a timeout for the window resize event
+             */
+            var waitOnEvent = (function () {
+                var timers = {};
+                return function (callback, ms, uniqueId) {
+                    if (!uniqueId) {
+                        uniqueId = "1";
+                    }
+                    if (timers[uniqueId]) {
+                        clearTimeout (timers[uniqueId]);
+                    }
+                    timers[uniqueId] = setTimeout(callback, ms);
+                };
+            })();
+
 
             /**
              *  Cater for the fact that there are always slides to the left of the
@@ -65,6 +81,7 @@
              */
 
             var setWidths = function() {
+
                 // Declare function's variables
                 var fullslideLi,
                     slideQty,
@@ -97,18 +114,82 @@
                 // Set the cell width in %
                 slideW = 100 / slideQty;
 
-                // Calculate the width of the slide in px
+                // Calculate the width of the ul and slide in px
                 ulWpx = $(el).css("width");
                 slideWpx = parseInt(ulWpx) / slideQty;
 
+                // Include the margins in with the calculation, if any
                 if( settings.slideMargin > 0 ) {
+
                     // Get the total margin for the whole slideshow
                     totalM = settings.slideMargin * (settings.displayQty - 1);
 
                     // Calculate width of the slides
                     slideWpx = slideWpx - (totalM / settings.displayQty);
 
-                    // Apply the slide margins
+                }
+
+                // Calculate if the min width is exceeded
+                if( settings.minWidth ) {
+
+                    if( slideWpx < settings.minWidth ) {
+
+                        // Don't decrement if the current display quantity is 1
+                        if( settings.displayQty > 1 ) {
+                            --settings.displayQty;
+
+                            // Recall this function with the new display quantity setting
+                            setWidths();
+
+                            // Prevent subsquent rendering of the CSS before the sizes have been recalculated
+                            return;
+                        }
+                    // Slide width is bigger than min width
+                    // Calculate if another slide could fit in, without making all slides less than min width
+                    // AND that we don't display more than one of each
+                    } else if( (Math.ceil(slideWpx * settings.displayQty / (settings.displayQty + 1)) > settings.minWidth) && (settings.displayQty < origSlideQty) ) {
+                        ++settings.displayQty;
+
+                        // Recall this function with the new display quantity setting
+                        setWidths();
+
+                        // Prevent subsquent rendering of the CSS before the sizes have been recalculated
+                        return;
+
+                    }
+
+                // Calculate if the max width is exceeded
+                } else if( settings.maxWidth ) {
+
+                    if( slideWpx > settings.maxWidth ) {
+
+                        // Don't increment if the display quantity is the same amount as original slide quantity
+                        if( settings.displayQty < origSlideQty ) {
+                            ++settings.displayQty;
+
+                            // Recall this function with the new display quantity setting
+                            setWidths();
+
+                            // Prevent subsquent rendering of the CSS before the sizes have been recalculated
+                            return;
+                        }
+                    // Slide width is smaller than max width
+                    // Calculate if a slide could be removed, without making all slides greater than max width
+                    // AND that we don't display any less than one
+                    } else if( Math.floor(slideWpx * (settings.displayQty) / (settings.displayQty - 1) <= settings.maxWidth) && (settings.displayQty > 1) ) {
+                        --settings.displayQty;
+
+                        // Recall this function with the new display quantity setting
+                        setWidths();
+
+                        // Prevent subsquent rendering of the CSS before the sizes have been recalculated
+                        return;
+
+                    }
+                }
+
+                // Apply the slide margins, if any
+                if( settings.slideMargin > 0 ) {
                     $(fullslideLi).css("marginRight", settings.slideMargin + "px");
                 }
 
@@ -258,7 +339,9 @@
 
             // Resize the slides when window size changes
             $(window).resize(function() {
-                setWidths();
+                waitOnEvent(function() {
+                    setWidths();
+                }, 100, "reset1");
             });
 
         });
