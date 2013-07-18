@@ -22,7 +22,9 @@
                     moveDuration : 1000,
                     moveEasing : "swing",
                     displayQty : 1,
-                    slideMargin : 20
+                    slideMargin : 20,
+                    minWidth : "",
+                    maxWidth : ""
                 };
 
             // Copy user options over
@@ -68,6 +70,7 @@
                     slideQty,
                     ulW,
                     ulH,
+                    ulWpx,
                     slideWpx,
                     totalM,
                     slideW;
@@ -94,29 +97,23 @@
                 // Set the cell width in %
                 slideW = 100 / slideQty;
 
-                // Apply the slide width
-                $(fullslideLi).css("width", slideW + "%");
-
-                // Get the cell width in px
-                slideWpx = $(fullslideLi).first().outerWidth();
+                // Calculate the width of the slide in px
+                ulWpx = $(el).css("width");
+                slideWpx = parseInt(ulWpx) / slideQty;
 
                 if( settings.slideMargin > 0 ) {
                     // Get the total margin for the whole slideshow
                     totalM = settings.slideMargin * (settings.displayQty - 1);
 
                     // Calculate width of the slides
-                    slideW = slideWpx - (totalM / settings.displayQty);
+                    slideWpx = slideWpx - (totalM / settings.displayQty);
 
-                } else {
-                    // Calculate width of the slides
-                    slideW = slideWpx - settings.displayQty;
+                    // Apply the slide margins
+                    $(fullslideLi).css("marginRight", settings.slideMargin + "px");
                 }
 
-                // Apply the slide margins
-                $(fullslideLi).css("marginRight", settings.slideMargin + "px");
-
                 //Apply the width
-                $(fullslideLi).css("width", slideW + "px");
+                $(fullslideLi).css("width", slideWpx + "px");
 
                 // Once all the sizes are set, we need to offset the ul to hide the slides to the left of the viewable slides
                 offsetFirstSlide();
