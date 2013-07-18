@@ -245,6 +245,9 @@
 
                 // Set the slides' width
                 setWidths();
+
+                // Unhide the ul if hidden
+                $(el).css("opacity","1");
             };
 
 
@@ -341,7 +344,7 @@
             $(window).resize(function() {
                 waitOnEvent(function() {
                     setWidths();
-                }, 100, "reset1");
+                }, 500, "reset1");
             });
 
         });
