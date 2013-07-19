@@ -77,6 +77,29 @@
 
 
             /**
+             *  Set the height of the ul to be called before every slide moves
+             */
+
+            var setUlHeight = function() {
+
+                // Declare function's variables
+                var fullslideLi,
+                    ulH;
+
+                // Assign fullslideLi var
+                fullslideLi = $(el).children("li");
+
+                // Find the height of the li so we can set the height of the ul to prevent wrapping
+                ulH = $(fullslideLi).first().height();
+
+                // Apply the height to the ul and animate it
+                $(el).animate({
+                    height : ulH + "px"
+                }, 500);
+            };
+
+
+            /**
              *  Calculate and set the widths of the slides and the ul container.
              */
 
@@ -86,14 +109,13 @@
                 var fullslideLi,
                     slideQty,
                     ulW,
-                    ulH,
                     ulWpx,
                     slideWpx,
                     totalM,
                     slideW;
 
                 // Set slide widths
-                // reassign fullslideLi var as contents have changed
+                // Assign fullslideLi var
                 fullslideLi = $(el).children("li");
 
                 // Get the current number of slides to work out the width of ul
@@ -102,14 +124,8 @@
                 // To get the ul width, calculate the percentage from the amount will be shown then
                 ulW = (100 / settings.displayQty) * slideQty;
 
-                // Find the height of the li so we can set the height of the ul to prevent wrapping
-                ulH = $(fullslideLi).first().outerHeight();
-
                 // Apply the width and the height to the ul
-                $(el).css({
-                    width : ulW + "%",
-                    height : ulH + "px"
-                });
+                $(el).css("width", ulW + "%");
 
                 // Set the cell width in %
                 slideW = 100 / slideQty;
@@ -196,6 +212,8 @@
                 //Apply the width
                 $(fullslideLi).css("width", slideWpx + "px");
 
+                setUlHeight();
+
                 // Once all the sizes are set, we need to offset the ul to hide the slides to the left of the viewable slides
                 offsetFirstSlide();
 
@@ -206,7 +224,7 @@
              *  Set the slider up at runtime, including creating DOM elements
              *  and setting widths.
              */
-            var init = function() {
+            var init = function(callback) {
 
                 // Declare function's variables
                 var fullslideLi;
@@ -247,7 +265,12 @@
                 setWidths();
 
                 // Unhide the ul if hidden
-                $(el).css("opacity","1");
+                $(el).css("display","block");
+
+                // If a callback has been include call it now
+                if( callback && typeof(callback) === "function" ) {
+                    callback();
+                }
             };
 
 
@@ -320,7 +343,7 @@
             // ------------------------------------------------ RUNTIME ------------------------------------------------- //
             // ---------------------------------------------------------------------------------------------------------- //
 
-            init();
+            init(setUlHeight);
 
 
             // ---------------------------------------------------------------------------------------------------------- //
@@ -330,13 +353,13 @@
 
             // Slide right on press of the left control
             $(el).next('.fullslide-controls').on('click', '.fullslide-left', function(event) {
-                slide("right");
+                slide("right", settings.moveQty, settings.moveDuration, settings.easing, setUlHeight);
                 event.preventDefault();
             });
 
             // Slide left on press of the right control
             $(el).next('.fullslide-controls').on('click', '.fullslide-right', function(event) {
-                slide("left");
+                slide("left", settings.moveQty, settings.moveDuration, settings.easing, setUlHeight);
                 event.preventDefault();
             });
 
