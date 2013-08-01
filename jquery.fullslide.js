@@ -1,5 +1,5 @@
 /*
- * jquery.fullslide.js 1.0
+ * jquery.fullslide.js 1.1
  *
  * Copyright 2013, Tommy Fisher http://www.tommyfisher.net
  *
@@ -80,8 +80,7 @@
              *  Set the height of the ul to be called before every slide moves
              */
 
-            var setUlHeight = function() {
-
+            var setUlHeight = function(callback) {
                 // Declare function's variables
                 var fullslideLi,
                     ulH;
@@ -89,13 +88,18 @@
                 // Assign fullslideLi var
                 fullslideLi = $(el).children("li");
 
-                // Find the height of the li so we can set the height of the ul to prevent wrapping
+                // Find the height of the LI so we can set the height of the UL to prevent wrapping
                 ulH = $(fullslideLi).first().height();
 
                 // Apply the height to the ul and animate it
                 $(el).animate({
                     height : ulH + "px"
-                }, 500);
+                }, 100, function() {
+                    // If a callback has been include call it now
+                    if( callback && typeof(callback) === "function" ) {
+                        callback();
+                    }
+                });
             };
 
 
@@ -212,8 +216,6 @@
                 //Apply the width
                 $(fullslideLi).css("width", slideWpx + "px");
 
-                setUlHeight();
-
                 // Once all the sizes are set, we need to offset the ul to hide the slides to the left of the viewable slides
                 offsetFirstSlide();
 
@@ -225,9 +227,11 @@
              *  and setting widths.
              */
             var init = function(callback) {
-
                 // Declare function's variables
-                var fullslideLi;
+                var fullslideLi,
+                    ulH,
+                    loaded,
+                    fontSize;
 
                 // If display amount is 1 then set the slide margin to 0
                 if( settings.displayQty === 1 ) {
@@ -241,6 +245,10 @@
                 // Count how many slides are orginally and update the variable
                 fullslideLi = $(el).children("li");
                 origSlideQty = $(fullslideLi).length;
+
+                // Check the font size of the LI to help us know when the contents
+                // have been loaded
+                fontSize = parseInt( $(fullslideLi).css("fontSize") );
 
                 // Ensure we're not trying to display more slides than we have
                 if( settings.displayQty > origSlideQty ) {
@@ -264,13 +272,43 @@
                 // Set the slides' width
                 setWidths();
 
-                // Unhide the ul if hidden
-                $(el).css("display","block");
+                // Wait for the content to be loaded before firing the callback
+                loaded = 0;
+                var waitForLoad = function() {
+                    // Contents should be loaded when the last LI is bigger than
+                    // the LIs default font size
+                    if( loaded !== 1 ) {
+                        if( $(fullslideLi).last().outerHeight() > fontSize ) {
+                            loaded = 1;
+                            waitForLoad();
+                        } else {
+                            window.setTimeout( waitForLoad, 500 );
+                        }
+                    } else {
+                        // Wait a bit longer to ensure it was fully loaded
+                        window.setTimeout( function() {
+                            // Everything loaded
+                            ulH = $(fullslideLi).first().height();
 
-                // If a callback has been include call it now
-                if( callback && typeof(callback) === "function" ) {
-                    callback();
+                            // Apply the height to the UL
+                            $(el).css({
+                                height : ulH + "px"
+                            });
+
+                            // Show the UL if hidden
+                            $(el).css({
+                                opacity : 1
+                            });
+
+                            // If a callback has been include call it now
+                            if( callback && typeof(callback) === "function" ) {
+                                callback();
+                            }
+                        }, 1000 );
+                    }
                 }
+
+                waitForLoad();
             };
 
 
@@ -343,7 +381,7 @@
             // ------------------------------------------------ RUNTIME ------------------------------------------------- //
             // ---------------------------------------------------------------------------------------------------------- //
 
-            init(setUlHeight);
+            init();
 
 
             // ---------------------------------------------------------------------------------------------------------- //
@@ -354,12 +392,14 @@
             // Slide right on press of the left control
             $(el).next('.fullslide-controls').on('click', '.fullslide-left', function(event) {
                 slide("right", settings.moveQty, settings.moveDuration, settings.easing, setUlHeight);
+                setUlHeight();
                 event.preventDefault();
             });
 
             // Slide left on press of the right control
             $(el).next('.fullslide-controls').on('click', '.fullslide-right', function(event) {
                 slide("left", settings.moveQty, settings.moveDuration, settings.easing, setUlHeight);
+                setUlHeight();
                 event.preventDefault();
             });
 
