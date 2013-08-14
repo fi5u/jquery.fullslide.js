@@ -1,5 +1,5 @@
 /*
- * jquery.fullslide.js 2.0
+ * jquery.fullslide.js 2.1
  *
  * Copyright 2013, Tommy Fisher http://tommyfisher.net
  *
