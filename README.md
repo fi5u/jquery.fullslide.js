@@ -1,5 +1,7 @@
 # jquery.fullslide
-A responsive jQuery slider/carousel plugin. Its width will automatically stretch to fill its parent container. The slider will adapt to viewport resize. Settings are minimal, with the user able to change the number of slides in view, the number of slides to move and move duration, among other settings. Callback functions are provided at key points in the plugin's instantiation and slide movement. Multiple slideshows can be placed on a page, and the API allows for slider control outside of the plugin.
+A responsive, Retina-ready jQuery slider/carousel plugin. Its width will automatically stretch to fill its parent container. The slider will adapt to viewport resize. Settings are minimal, with the user able to change the number of slides in view, the number of slides to move and move duration, among other settings. Callback functions are provided at key points in the plugin's instantiation and slide movement. Multiple slideshows can be placed on a page, and the API allows for slider control outside of the plugin.
+
+Both hidpi (Retina) and normal dpi control arrows are supplied. Their display is automatically conrolled by the supplied stylesheet.
 
 By setting `maxWidth` or `minWidth`, the user can ensure a slider with content that does not stretch or shrink past it's intended widths.
 
