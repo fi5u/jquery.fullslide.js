@@ -49,11 +49,6 @@
             // user-provided options (if any)
             slider.settings = $.extend({}, defaults, options);
 
-            // If display amount is 1 then set the slide margin to 0
-            if( slider.settings.displayQty === 1 ) {
-                slider.settings.slideMargin = 0;
-            }
-
             // Create DOM elements
             $element.wrap('<div class="fullslide-wrap" style="opacity:0;" />');
             $element.closest(".fullslide-wrap").append("<div class='fullslide-controls'><a href='#' class='fullslide-left'>left</a> <a href='#' class='fullslide-right'>right</a></div>");
