@@ -23,6 +23,10 @@ To hide the slider whilst it is loading, set `opacity:0` to the `ul` element.
 
 The selector needs to be a `ul` element. Each `li` element will be a slide.
 
+Include the CSS file in the `head` and make sure the link to the image sprite is correct.
+
+Include jQuery before jquery.fullslide plugin.
+
 
 ### Optional parameters
 * displayQty (integer) - The number of slides shown at a time **default: 1**.
