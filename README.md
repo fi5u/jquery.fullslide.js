@@ -72,3 +72,4 @@ See LICENCE.md
 * Margin should be allowed to set on slides when only one slide is displayed.
 * Enable automatic timing function, so that the slides move automatically.
 * Currently, when the display quantity is greater than one, and the slides displayed are different heights, the containing element will resize to the height of furthest left slide, even if other slides are bigger. The container element should never shrink more than the height of the tallest element in view.
+* Allow customisation of height resize duration.
