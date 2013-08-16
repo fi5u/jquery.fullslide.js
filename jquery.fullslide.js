@@ -1,5 +1,5 @@
 /*
- * jquery.fullslide.js 2.1
+ * jquery.fullslide.js 2.2
  *
  * Copyright 2013, Tommy Fisher http://tommyfisher.net
  *
@@ -8,6 +8,9 @@
 (function($) {
 
     $.fullslide = function(element, options) {
+
+        // Declare plugins variables
+        var autoInt; // variable to store the timing function
 
         // Default options
         var defaults = {
@@ -18,6 +21,10 @@
             slideMargin : 20,
             minWidth : "",
             maxWidth : "",
+            autoSlide : true,
+            autoDirection : "left",
+            slideDelay : 3000,
+            pauseOnHover : true,
             onReady : function() {},
             onBeforeSlide : function() {},
             onAfterSlide : function() {}
@@ -28,6 +35,9 @@
 
         // This will hold the merged default, and user-provided options
         slider.settings = {}
+
+        // Set vars to be used from outside of plugin, specifically for event bindings
+        slider.vars = {}
 
         var $element = $(element), // Reference to the jQuery version of DOM element
              element = element;    // Reference to the actual DOM element
@@ -48,6 +58,9 @@
             // The plugin's final properties are the merged default and
             // user-provided options (if any)
             slider.settings = $.extend({}, defaults, options);
+
+            // Set hoverPrevent to 0 - used to prevent accidental auto start when manually stopped
+            slider.vars.hoverPrevent = 0;
 
             // Create DOM elements
             $element.wrap('<div class="fullslide-wrap" style="opacity:0;" />');
@@ -119,6 +132,11 @@
                         if( slider.settings.onReady && typeof(slider.settings.onReady) === "function" ) {
                             slider.settings.onReady();
                         }
+
+                        // If set to slide automatically, start now
+                        if( slider.settings.autoSlide === true ) {
+                            slider.startAuto();
+                        }
                     }, 1000 );
                 }
             }
@@ -136,7 +154,7 @@
              *  Invoke the sliding action, either left or right
              */
 
-            // Declare functions
+            // Declare method's variables
             var slideWpx,
                 moveDistance,
                 relativeMovement,
@@ -205,6 +223,33 @@
             }
         };
 
+
+        slider.startAuto = function(allowHoverStop) {
+            /**
+             *  Begin the automatic scrolling
+             */
+
+            if( allowHoverStop && allowHoverStop === true ) {
+                slider.vars.hoverPrevent = 0;
+            }
+
+            // Start the interval timer
+            autoInt = setInterval( function() { slider.slide( slider.settings.autoDirection ); }, slider.settings.slideDelay );
+        };
+
+
+        slider.stopAuto = function(preventHoverStart) {
+            /**
+             *  Stop the automatic scrolling
+             */
+
+            // If preventHoverStart has been passed then don't allow hover events to trigger auto slider
+            if( preventHoverStart && preventHoverStart === true ) {
+                slider.vars.hoverPrevent = 1;
+            }
+
+            clearInterval(autoInt);
+        };
 
         // ---------------------------------------------------------------------------------------------------------- //
         // ------------------------------------------- PRIVATE METHODS ---------------------------------------------- //
@@ -463,5 +508,24 @@
         selfEl.data("fullslide").slide("left", pref.moveQty, pref.moveDuration, pref.easing);
         event.preventDefault();
     });
+
+    // Pause on hover
+    $('body').on(
+    {
+        mouseenter: function() {
+            var selfEl = $(this).children("ul");
+            if( selfEl.data('fullslide').settings.autoSlide === true && selfEl.data('fullslide').settings.pauseOnHover === true && selfEl.data('fullslide').vars.hoverPrevent === 0 ) {
+                selfEl.data("fullslide").stopAuto();
+            }
+        },
+        mouseleave: function() {
+            var selfEl = $(this).children("ul");
+            if( selfEl.data('fullslide').settings.autoSlide === true && selfEl.data('fullslide').settings.pauseOnHover === true && selfEl.data('fullslide').vars.hoverPrevent === 0 ) {
+                selfEl.data("fullslide").startAuto();
+            }
+        }
+    }
+    , '.fullslide-wrap');
+
 
 })(jQuery);
