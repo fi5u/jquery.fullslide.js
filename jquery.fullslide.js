@@ -236,33 +236,6 @@
         };
 
 
-        var setUlHeight = function(callback) {
-            /**
-             *  Set the height of the ul to be called after every slide moves
-             */
-
-            // Declare method's variables
-            var fullslideLi,
-                ulH;
-
-            // Assign fullslideLi var
-            fullslideLi = $element.children("li");
-
-            // Find the height of the LI so we can set the height of the UL to prevent wrapping
-            ulH = $(fullslideLi).first().height();
-
-            // Apply the height to the ul and animate it
-            $element.animate({
-                height : ulH + "px"
-            }, 100, function() {
-                // If a callback has been include call it now
-                if( callback && typeof(callback) === "function" ) {
-                    callback();
-                }
-            });
-        };
-
-
         var setWidths = function() {
             /**
              *  Calculate and set the widths of the slides and the ul container.
@@ -374,6 +347,33 @@
 
             // Once all the sizes are set, we need to offset the ul to hide the slides to the left of the viewable slides
             offsetFirstSlide();
+        };
+
+
+        var setUlHeight = function(callback) {
+            /**
+             *  Set the height of the ul to be called after every slide moves
+             */
+
+            // Declare method's variables
+            var fullslideLi,
+                ulH;
+
+            // Assign fullslideLi var
+            fullslideLi = $element.children("li");
+
+            // Find the height of the LI so we can set the height of the UL to prevent wrapping
+            ulH = $(fullslideLi).first().height();
+
+            // Apply the height to the ul and animate it
+            $element.animate({
+                height : ulH + "px"
+            }, 100, function() {
+                // If a callback has been include call it now
+                if( callback && typeof(callback) === "function" ) {
+                    callback();
+                }
+            });
         };
 
 
